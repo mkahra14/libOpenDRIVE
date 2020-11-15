@@ -170,7 +170,7 @@
                         for (let s = lane_sec.s0; s < (lane_sec.s0 + lane_sec_len); s += PARAMS.resolution)
                             s_vals.push(s);
                         s_vals.push(lane_sec.s0 + lane_sec_len);
-                        lanes_outer_border_pts.push(rdp(s_vals.map(s => lane.get_outer_border_pt(s)), PARAMS.resolution));
+                        lanes_outer_border_pts.push(rdp(s_vals.map(s => road.get_surface_pt(s, lane.get_border(s))), PARAMS.resolution));
                         if (lane_id != 0)
                             lanes.push(lane);
                     }

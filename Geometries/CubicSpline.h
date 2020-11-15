@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 namespace odr
 {
@@ -17,12 +18,12 @@ struct Poly3
 struct CubicSpline
 {
     CubicSpline() = default;
+    virtual ~CubicSpline() = default;
 
     size_t size() const;
     double get(double s) const;
     double get_grad(double s) const;
 
-    // std::shared_ptr<Poly3> get_poly(double s);
     std::shared_ptr<const Poly3> get_poly(double s) const;
 
     std::map<double /*s0*/, std::shared_ptr<Poly3>> polys;

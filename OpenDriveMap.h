@@ -14,7 +14,9 @@ class OpenDriveMap
 public:
     OpenDriveMap(std::string xodr_file);
 
-    const std::string                    xodr_file;
+    std::string xodr_file;
+    std::string proj4;
+
     std::map<int, std::shared_ptr<Road>> roads;
 };
 

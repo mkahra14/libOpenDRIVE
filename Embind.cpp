@@ -125,18 +125,23 @@ EMSCRIPTEN_BINDINGS(OpenDriveMap)
 
     emscripten::class_<Lane>("Lane")
         .smart_ptr<std::shared_ptr<Lane>>("shared_ptr<Lane>")
-        .constructor<int, std::string>()
-        .function("get_outer_border_pt", &Lane::get_outer_border_pt)
+        .constructor<int, std::string, bool>()
+        .function("get_border", &Lane::get_border)
         .property("id", &Lane::id)
         .property("type", &Lane::type)
+        .property("level", &Lane::level)
+        .property("predecessor", &Lane::predecessor)
+        .property("successor", &Lane::successor)
         .property("lane_section", &Lane::lane_section)
         .property("lane_width", &Lane::lane_width);
 
     emscripten::register_map<int, std::shared_ptr<Lane>>("map<int, shared_ptr<Lane>>");
+    emscripten::register_map<int, double>("map<int, double>");
 
     emscripten::class_<LaneSection>("LaneSection")
         .smart_ptr<std::shared_ptr<LaneSection>>("shared_ptr<LaneSection>")
         .constructor<double>()
+        .function("get_lane_borders", &LaneSection::get_lane_borders)
         .property("s0", &LaneSection::s0)
         .property("road", &LaneSection::road)
         .property("lanes", &LaneSection::lanes);
@@ -159,6 +164,7 @@ EMSCRIPTEN_BINDINGS(OpenDriveMap)
         .smart_ptr<std::shared_ptr<Road>>("shared_ptr<Road>")
         .constructor<double, int, int>()
         .function("get_xyz", &Road::get_xyz)
+        .function("get_surface_pt", &Road::get_surface_pt)
         .property("id", &Road::id)
         .property("junction", &Road::junction)
         .property("length", &Road::length)
