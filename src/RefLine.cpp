@@ -99,8 +99,8 @@ std::set<double> RefLine::approximate_linear(double eps, double s_start, double 
     for (auto s0_geom_iter = s_start_geom_iter; s0_geom_iter != s_end_geom_iter; s0_geom_iter++)
     {
         const std::set<double> s_vals_geom = s0_geom_iter->second->approximate_linear(eps);
-        if (s_vals_geom.size() < 2)
-            throw std::runtime_error("expected at least two sample points");
+//        if (s_vals_geom.size() < 2)
+//            throw std::runtime_error("expected at least two sample points");
         for (const double& s : s_vals_geom)
         {
             if (s > s_start && s < s_end)

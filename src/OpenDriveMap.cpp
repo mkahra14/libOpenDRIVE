@@ -299,8 +299,8 @@ OpenDriveMap::OpenDriveMap(const std::string& xodr_file, const OpenDriveMapConfi
             }
 
             /* check for lateralProfile shape - not implemented yet */
-            for (auto road_shape_node : road_node.child("lateralProfile").children("shape"))
-                printf("Lateral Profile Shape not supported\n");
+            /*for (auto road_shape_node : road_node.child("lateralProfile").children("shape"))
+                printf("Lateral Profile Shape not supported\n");*/
         }
 
         /* parse road lane sections and lanes */
@@ -622,15 +622,21 @@ RoutingGraph OpenDriveMap::get_routing_graph() const
         {
             const JunctionConnection& conn = id_conn.second;
 
+//            printf("id_junc %s id_conn %s\n", id_junc.first.c_str(), id_conn.first.c_str());
+
             RoadPtr incoming_road = try_get_val(this->roads, conn.incoming_road, RoadPtr(nullptr));
             RoadPtr connecting_road = try_get_val(this->roads, conn.connecting_road, RoadPtr(nullptr));
             if (!incoming_road || !connecting_road)
                 continue;
 
-            const bool is_succ_junc = incoming_road->successor.type == RoadLink::Type::Junction && incoming_road->successor.id == conn.id;
-            const bool is_pred_junc = incoming_road->predecessor.type == RoadLink::Type::Junction && incoming_road->predecessor.id == conn.id;
+//            printf("%s %s incoming %s connecting %s\n", id_junc.first.c_str(), id_conn.first.c_str(), incoming_road->id.c_str(), connecting_road->id.c_str());
+
+            const bool is_succ_junc = incoming_road->successor.type == RoadLink::Type::Junction && incoming_road->successor.id == id_junc.first;
+            const bool is_pred_junc = incoming_road->predecessor.type == RoadLink::Type::Junction && incoming_road->predecessor.id == id_junc.first;
             if (!is_succ_junc && !is_pred_junc)
                 continue;
+
+//            printf("%s %s is_succ_junc %d is_pred_junc %d\n", id_junc.first.c_str(), id_conn.first.c_str(), is_succ_junc, is_pred_junc);
 
             LanesecPtr incoming_lanesec =
                 is_succ_junc ? incoming_road->s_to_lanesection.rbegin()->second : incoming_road->s_to_lanesection.begin()->second;
@@ -639,6 +645,9 @@ RoutingGraph OpenDriveMap::get_routing_graph() const
                                                 : connecting_road->s_to_lanesection.rbegin()->second;
             for (const JunctionLaneLink& lane_link : conn.lane_links)
             {
+
+//                printf("%s %s lane_link %d %d\n", id_junc.first.c_str(), id_conn.first.c_str(), lane_link.from, lane_link.to);
+
                 if (lane_link.from == 0 || lane_link.to == 0)
                     continue;
                 LanePtr from_lane = try_get_val(incoming_lanesec->id_to_lane, lane_link.from, LanePtr(nullptr));
@@ -650,6 +659,8 @@ RoutingGraph OpenDriveMap::get_routing_graph() const
                 const RoutingGraphVertex to(to_lane->road.lock()->id, to_lane->lane_section.lock()->s0, to_lane->id);
                 const double             lane_length = from_lane->lane_section.lock()->get_length();
                 routing_graph.add_edge(RoutingGraphEdge(from, to, lane_length));
+
+//                printf("junc %s conn %s from %s %f %d to %s %f %d length %f\n", id_junc.first.c_str(), id_conn.first.c_str(), from.road_id.c_str(), from.lane_section_s0, from.lane_id, to.road_id.c_str(), to.lane_section_s0, to.lane_id, lane_length);
             }
         }
     }
